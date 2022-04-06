@@ -1,0 +1,36 @@
+#+title: Drake Tutorials
+#  LocalWords:  miniconda jupyter
+
+This is the unofficial C++ version of the official [[https://deepnote.com/project/Tutorials-K0_FCa7yQX2kDWBx3-2RmQ/%2Findex.ipynb][Drake Tutorials]], which is based on python notebook. This repo is based on [[https://github.com/jupyter-xeus/xeus-cling][xeus-cling]].
+
+* Prerequisite
+
+** Install miniconda
+Check the official installers [[https://docs.conda.io/en/latest/miniconda.html][here]].
+
+** Install mamba
+#+begin_src sh
+  conda install mamba -n base -c conda-forge
+#+end_src
+
+** Create environment `drake` and install the dependencies
+#+begin_src sh
+  mamba create -n drake_tutorials
+  conda activate drake_tutorials
+  mamba install xeus-cling jupyterlab -c conda-forge
+#+end_src
+
+** Add C++ jupyter kernels
+#+begin_src sh
+  jupyter kernelspec install $CONDA_PREFIX/share/jupyter/kernels/xcpp11 --user
+  jupyter kernelspec install $CONDA_PREFIX/share/jupyter/kernels/xcpp14 --user
+  jupyter kernelspec install $CONDA_PREFIX/share/jupyter/kernels/xcpp17 --user
+#+end_src
+
+* Usage
+Launch the jupyter lab with `jupyter-lab` under the repository root directory.
+
+#+begin_src sh
+  conda activate drake_tutorials
+  jupyter-lab
+#+end_src
