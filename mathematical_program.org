@@ -52,4 +52,77 @@ problems
 
 This tutorial provides the basics of Drake's MathematicalProgram.
 Advanced tutorials are available at the [[*Advanced tutorials][bottom]] of this document.
-** Advanced tutorials
+
+** Basics of MathematicalProgram class
+Drake's MathematicalProgram class contains the mathematical formulation of an optimization problem,
+namely the decision variables $x$, the cost function $f(x)$, and the constraint set $\mathcal{S}$.
+
+*** Initialize a MathematicalProgram object
+To initialize this class, first create an empty MathematicalProgram as
+
+#+begin_src cpp
+  #include "drake/solvers/mathematical_program.h"
+  // ...
+  drake::solvers::MathematicalProgram prog;
+  // ...
+#+end_src
+
+*** Adding decision variables
+Shown below, the function ~NewContinuousVariables~ adds two new continuous decision variables to ~prog~.  The newly added variables are returned as ~x~ (~VectorXDecisionVariable~).
+Note the range of the variable is a continuous set, as opposed to binary variables which only take discrete value 0 or 1.
+
+The default names of the variable in *x* are "x(0)" and "x(1)".  The next line prints the default names and types in ~x~,
+whereas the second line prints the symbolic expression "1 + 2x[0] + 3x[1] + 4x[1]".
+
+#+begin_src cpp
+  auto x = prog.NewContinuousVariables(2);
+  std::cout << x << "\n";
+  /**
+   ,* Output:
+   ,* x(0)
+   ,* x(1)
+   ,*/
+
+  std::cout << 1 + 2 * x[0] + 3 * x[1] + 4 * x[1] << "\n";
+  /**
+   ,* Output:
+   ,* (1 + 2 * x(0) + 7 * x(1))
+   ,*/
+#+end_src
+
+To create an array ~y~ of two variables named "dog(0)"" and "dog(1)", pass the name "dog" as a second argument to ~NewContinuousVariables()~.
+Also shown below is the printout of the two variables in ~y~ and a symbolic expression involving ~y~.
+
+#+begin_src cpp
+  auto y = prog.NewContinuousVariables(2, "dog");
+  std::cout << y << "\n";
+  /**
+   ,* Output:
+   ,* dog(0)
+   ,* dog(1)
+   ,*/
+
+  std::cout << y[0] + y[0] + y[1] * y[1] * y[1] << "\n";
+  /**
+   ,* Output:
+   ,* (2 * dog(0) + pow(dog(1), 3))
+   ,*/
+#+end_src
+
+To create a $3 \times 2$ matrix of variables named "A", type
+
+#+begin_src cpp
+  auto var_matrix = prog.NewContinuousVariables(3, 2, "A");
+  std::cout << var_matrix << "\n";
+  /**
+   ,* Output:
+   ,* A(0,0) A(0,1)
+   ,* A(1,0) A(1,1)
+   ,* A(2,0) A(2,1)
+   ,*/
+#+end_src
+
+*** Playground
+Launch compiler-explorer and then click [[http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:36,endLineNumber:15,positionColumn:36,positionLineNumber:15,selectionStartColumn:36,selectionStartLineNumber:15,startColumn:36,startLineNumber:15),source:'%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%0Atemplate+%3Ctypename+T%3E%0Avoid+print(const+T%26+value)+%7B%0A++std::cout+%3C%3C+value+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main()+%7B%0A++drake::solvers::MathematicalProgram+prog%3B%0A++auto+x+%3D+prog.NewContinuousVariables(2)%3B%0A%0A++print(x)%3B%0A++print(1+%2B+2+*+x%5B0%5D+%2B+3+*+x%5B1%5D+%2B+4+*+x%5B1%5D)%3B%0A%0A++auto+y+%3D+prog.NewContinuousVariables(2,+%22dog%22)%3B%0A++print(y)%3B%0A++print(y%5B0%5D+%2B+y%5B0%5D+%2B+y%5B1%5D+*+y%5B1%5D+*+y%5B1%5D)%3B%0A%0A++auto+var_matrix+%3D+prog.NewContinuousVariables(3,+2,+%22A%22)%3B%0A++print(var_matrix)%3B%0A%0A++return+0%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4 ][this]].
+
+* Advanced tutorials
