@@ -1,0 +1,55 @@
+#+title: MathematicalProgram Tutorial
+#+options: tex:t
+
+* Background
+Many engineering problems can be formulated as mathematical optimization
+problems, and solved by numerical solvers. A generic mathematical
+optimization problem can be formulated as
+
+$\begin{aligned} \begin{array}{rl}  \min_x \; & f(x)  \\\text{subject to} \; & x \in\mathcal{S}  \end{array}  \qquad  \boxed{  \begin{array}{ll}  \text{The real-valued decision variable is} &x\\  \text{The real-valued cost function is} &f(x)\\  \text{The constraint set is} &\mathcal{S}\\  \text{The optimal } x \text{ that minimizes the cost function is} &x^*  \end{array}  } \end{aligned}$
+
+where $x$ is the real-valued decision variable(s), $f(x)$ is the
+real-valued /cost function/, $\mathcal{S}$ is the constraint set for
+$x$. Our goal is to find the optimal $x^*$ within the constraint set
+$\mathcal{S}$, such that $x^*$ minimizes the cost function $f(x)$.
+
+For example, the following optimization problem determines the value of
+$x$ that minimizes $x^3 + 2x + 1$ subject to $x \ge 1$.
+$\begin{aligned} \begin{array}{rl} \min_x\;&x^3 + 2x + 1\\ \text{subject to}\;\;&x \ge 1 \end{array} \quad \boxed{  \begin{array}{ll}  \text{The real-valued decision variable is} & x\\  \text{The real-valued cost function }f(x) \text{ is} & x^3 + 2x + 1\\  \text{The set }\mathcal{S} \text{ of constraints is} & x \ge 1\\  \text{The value that minimizes the cost function is} & x^* = 1  \end{array} } \end{aligned}$
+
+In general, how an optimization problem is solved depends on its
+categorization (categories include Linear Programming, Quadratic
+Programming, Mixed-integer Programming, etc.). Categorization depends on
+properties of both the cost function $f(x)$ and the constraint set
+$\mathcal{S}$. For example, if the cost function $f(x)$ is a linear
+function of $x$, and the constraint $\mathcal{S}$ is a linear set
+$\mathcal{S} = \{x | Ax\le b\}$, then we have a /linear programming/
+problem, which is efficiently solved with certain solvers.
+
+There are multiple solvers for each category of optimization problems,
+but each solver has its own API and data structures. Frequently, users
+need to rewrite code when they switch solvers. To remedy this, Drake
+provides a common API through the /MathematicalProgram/ class. In
+addition to avoiding solver-specific code, the constraint and cost
+functions can be written in symbolic form (which makes code more
+readable). In these ways, Drake's MathematicalProgram is akin to
+[[https://yalmip.github.io/][YALMIP]] in MATLAB or
+[[https://github.com/JuliaOpt/JuMP.jl][JuMP]] in Julia, and we support
+both Python and C++. Note: Drake supports many
+[[https://drake.mit.edu/doxygen_cxx/group__solvers.html][solvers]] (some
+are open-source and some require a license).
+
+Drake can formulate and solve the following categories of optimization
+problems
+ + Linear programming
+ + Quadratic programming
+ + Second-order cone programming
+ + Nonlinear nonconvex programming
+ + Semidefinite programming
+ + Sum-of-squares programming
+ + Mixed-integer programming (mixed-integer linear programming, mixed-integer quadratic programming, mixed-integer second-order cone programming).
+ + Linear complementarity problem
+
+This tutorial provides the basics of Drake's MathematicalProgram.
+Advanced tutorials are available at the [[*Advanced tutorials][bottom]] of this document.
+** Advanced tutorials
