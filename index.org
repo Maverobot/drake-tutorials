@@ -1,3 +1,7 @@
 #+title: Drake Tutorials
 
 This is the unofficial C++ version of the [[https://deepnote.com/project/Tutorials-K0_FCa7yQX2kDWBx3-2RmQ/%2Findex.ipynb][Drake Tutorials]].
+
+The list of tutorials:
+
+- [[file:mathematical_program.org][Mathematical Program]]
