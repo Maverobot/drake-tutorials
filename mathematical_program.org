@@ -122,7 +122,113 @@ To create a $3 \times 2$ matrix of variables named "A", type
    ,*/
 #+end_src
 
-*** Playground
-Launch compiler-explorer and then click [[http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:36,endLineNumber:15,positionColumn:36,positionLineNumber:15,selectionStartColumn:36,selectionStartLineNumber:15,startColumn:36,startLineNumber:15),source:'%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%0Atemplate+%3Ctypename+T%3E%0Avoid+print(const+T%26+value)+%7B%0A++std::cout+%3C%3C+value+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main()+%7B%0A++drake::solvers::MathematicalProgram+prog%3B%0A++auto+x+%3D+prog.NewContinuousVariables(2)%3B%0A%0A++print(x)%3B%0A++print(1+%2B+2+*+x%5B0%5D+%2B+3+*+x%5B1%5D+%2B+4+*+x%5B1%5D)%3B%0A%0A++auto+y+%3D+prog.NewContinuousVariables(2,+%22dog%22)%3B%0A++print(y)%3B%0A++print(y%5B0%5D+%2B+y%5B0%5D+%2B+y%5B1%5D+*+y%5B1%5D+*+y%5B1%5D)%3B%0A%0A++auto+var_matrix+%3D+prog.NewContinuousVariables(3,+2,+%22A%22)%3B%0A++print(var_matrix)%3B%0A%0A++return+0%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4 ][this]].
 
+*** Adding constraints
+There are many ways to impose constraints on the decision variables. This tutorial shows a few simple examples.
+Refer to the links at the [[*Advanced tutorials][bottom]] of this document for other types of constraints.
+
+**** AddConstraint
+The simplest way to add a constraint is with ~MathematicalProgram.AddConstraint()~.
+#+begin_src cpp
+  // Add an equality constraint
+  prog.AddConstraint(x[0] * x[1] == 1)
+#+end_src
+
+
+You can also add inequality constraints to `prog` such as
+#+begin_src cpp
+  // Add inequality constraints
+  prog.AddConstraint(x[0] >= 0);
+  prog.AddConstraint(x[0] - x[1] <= 0);
+#+end_src
+*** Adding Cost functions
+In a complicated optimization problem, it is often convenient to write the total cost function $f(x)$ as a sum of individual cost functions
+
+$\begin{aligned}
+f(x) = \sum_i g_i(x)
+\end{aligned}$
+
+**** AddCost method
+The simplest way to add an individual cost function $g_i(x)$ to the total cost function $f(x)$ is with the ~MathematicalProgram.AddCost()~ method (as shown below).
+#+begin_src cpp
+  // Add a cost x(0)**2 + 3 to the total cost. Since prog doesn't have a cost before, now the total cost is x(0)**2 + 3
+  prog.AddCost(x[0] ** 2 + 3);
+#+end_src
+
+To add another individual cost function $x(0) + x(1)$ to the total cost function $f(x)$, simply call ~AddCost()~ again as follows
+#+begin_src cpp
+  prog.AddCost(x[0] + x[1]);
+#+end_src
+
+now the total cost function becomes $x(0)^2 + x(0) + x(1) + 3$.
+
+~prog~ can analyze each of these individual cost functions and determine that $x(0) ^ 2 + 3$  is a convex quadratic function, and $x(0) + x(1)$ is a linear function of $x$.
+
+*** Solve the optimization problem
+Once all the decision variables/constraints/costs are added to ~prog~, we are ready to solve the optimization problem.
+**** Automatically choosing a solver
+The simplest way to solve the optimization problem is to call ~Solve()~ function. Drake's MathematicalProgram analyzes the type of the constraints/costs,
+and then calls an appropriate solver for your problem. The result of calling `Solve()` is stored inside the return argument. Here is a code snippet
+#+begin_src cpp
+  #include <drake/solvers/mathematical_program.h>
+  #include <drake/solvers/solve.h>
+
+  #include <iostream>
+
+  template <typename... Args>
+  void print(Args&&... value) {
+    (std::cout << ... << value) << "\n---\n";
+  }
+
+  int main(int argc, char* argv[]) {
+    /*
+     ,* Solves a simple optimization problem
+     ,*    min x(0)^2 + x(1)^2
+     ,* subject to x(0) + x(1) = 1
+     ,*        x(0) <= x(1)
+     ,*/
+    // Set up the optimization problem.
+    auto prog = drake::solvers::MathematicalProgram();
+    auto x = prog.NewContinuousVariables(2);
+    prog.AddConstraint(x[0] + x[1] == 1);
+    prog.AddConstraint(x[0] <= x[1]);
+    prog.AddCost(pow(x[0], 2) + pow(x[1], 2));
+
+    // Now solve the optimization problem.
+    auto result = drake::solvers::Solve(prog);
+
+    // print out the result.
+    print("Success? ", result.is_success());
+    // Print the solution to the decision variables.
+    print("x* = ", result.GetSolution(x));
+    // Print the optimal cost.
+    print("optimal cost = ", result.get_optimal_cost());
+    // Print the name of the solver that was called.
+    print("solver is: ", result.get_solver_id().name());
+    return 0;
+  }
+#+end_src
+
+Notice that we can then retrieve optimization result from the return argument of ~Solve~. For example, the solution $x^*$ is retrieved from ~result.GetSolution()~,
+and the optimal cost from ~result.get_optimal_cost()~. To play around with it, launch compiler-explorer locally and click [[http://localhost:10240/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGIMwAcpK4AMngMmAByPgBGmMQS0gAOqAqETgwe3r7%2BQSlpjgJhEdEscQlStpj2hQxCBEzEBFk%2BfoFVNRn1jQTFUbHxibYNTS057QojveH9ZYNSAJS2qF7EyOwc5gDM4cjeWADUJltu6MRMANaYAPQKngBu8QrXLEwECJivjqK0APpJxFQwHOLAAdAhjtgTBoAILbXb7TBHE5nS43O60R7EZ4Yx7gyHQuGw%2BEMPZeQ7HNxOSbETCsAnE2EET5JAzM5FuAgATySjFYmFBgoOMOIwAUDJh91QeHQBwB4QIEBFYvMADY1YLQQd7mIvJgFkcAOxWWEHA4QSboEAoFYEDmUg6a%2B0nbW6/XOtxHMxmEwAVjcDAAtMG/QHzD6tia4YaACKEwkKg6vcIQRONYDIUgHZAIRoAKgO6fufqsvpjBpMxsJZuueerZoLQgemAUhYOaRYrKRqCSjhYeAAXm8MnLATF6Cx6wcC2ak%2BEDqoIBoFn7sGYvRYFxAuCvfWupwWFF4YtpMA4DkQt8uN1ud8iYwcuAfZy%2BrxWTscH4udwfrvXrtcBxCJgdpeEkF4fAcPZ9oOw4CKOqDjp8oL1kwXiXgCQL3gcqJXNauJPNaACybwfF8eA/MogLAqwEArpGqHoagC7YZhwCgpEmAAO4eII4ReCsCgAGqNHgTBIQoEBmPRUZmvKggQOGqjYeGWaqDJjGXmgDA0kwCpcKx1GgjC6DuAIukKhAqglhofoPtYC4lk%2BZb3p%2Bj4aaao6WeG2kWYIXAgF6ZhZr5BDnPpHkwmaaFaeZYV6YI65uWxxmmbxfmKtZvoWLZLmUm5WUWM55bHLJXkKT5cXhYlgWqdmVUJQQ0mlZpzFoJMBnJUZJlmZMEApFxVk2XZWbSTeA1DdlxWjQskVycQ3neu1BABUFIWpCtkX/oBkSoFx7bNhB3a9ng/ZDrUCFIWCrUHLSR60Habm4ewIAEdi1pNpimD9dRW2eQB5V2raR23S2XgPShnnyYq4ZCF4yDrAoCi1d6WZ3eDBCgngCi/EeCMtpJs0tf9gFUYm7xIhi6EjpeFM4We2MjjqC3ifQCiQ1FgOKd6qgFm5dXoxDADiIGfdTAhWUTDEkwcZOCCD0GnWI9WTBz82LWYiuvLQKuPVs9mo6D92Y8AIG/FrYi/MtdFzQcANy3adPMGwUFUCDb0QW8BxcUwrY/PQ6Bq1z4Ye9jKPBUbGOgqbBC482xC/DKdGgs731S2VtIEKsDAHLZ0vRnGsIcEstCcL6vB%2BBwWikKgnBuNYDl3Ks6xelsPCkAQmjF0sFwgL6kighoqpbAAnIakgBGYI%2B%2BoavpmJI0ilxwkgV13NecLwyMaB3XdLHAsBIGgnZ0PE5CUEfSQnwkwAj3wdDMu9EAxGvMThI0XKcO3R9sIIADyDC0A/lXXgWBXhGHEMA0g%2BBaQODwI8ZGkDMCqDPOhDY1cFTVDXrQPAMRzjEC5B4LAa8wqnU/sXPgBgxRCTwNxX%2BvJK7t34IIEQYh2CVCYfIJQag166C4PoQwxgG6WH0Dg5GsBU4gEwHgU2DBSBYk4FsLYhpyEQAkc9ORgxuBcC0LNGuJ1zKcEDJaT8phLDWC4MojoZ5aguAYGZbIfg%2BGhBmKUcoeh8jpAEGMRxpAPG1D6K4%2BYVjYECG6KMTwrQ9B2GsV0KYASBgVGGD0bxUS4kuISRIJYTc1hsI7rSDYPAS5l1XpA2uHBgBCM3CPc09czHCIOLgQgJBW58IOB4Y%2B9BiAtIWLwTuwC95IFtEkdCZ8IAXyvnoTA%2BAiCJI4Sw8Q7DZCKBUOoSBYVMAFN4Fxc4SQyFFI4OXUgldq5lN/uhYZQM3YVLqVUmpqAOnxG6b03ePcQCSF9KCEeWxVQaDML6CxGhJDz1nqqfQnAV6kBYBIDQ29jm8DKZvPQfSdH7LMCUk5G8d79KWFiNIzhJBAA%3D ][here]].
+
+Some optimization solution is infeasible (doesn't have a solution). For example in the following code example, ~result.get_solution_result()~ will not report ~kSolutionFound~.
+
+#+begin_src cpp
+  /*
+   ,* An infeasible optimization problem.
+   ,*/
+  auto prog = MathematicalProgram();
+  auto x = prog.NewContinuousVariables(1)[0];
+  auto y = prog.NewContinuousVariables(1)[0];
+  prog.AddConstraint(x + y >= 1);
+  prog.AddConstraint(x + y <= 0);
+  prog.AddCost(x);
+
+  auto result = Solve(prog);
+  print("Success? ", result.is_success());
+  print(result.get_solution_result());
+#+end_src
+
+To play around with it, launch compiler-explorer locally and click [[http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:29,positionColumn:1,positionLineNumber:29,selectionStartColumn:1,selectionStartLineNumber:29,startColumn:1,startLineNumber:29),source:'%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%23include+%3Cdrake/solvers/solve.h%3E%0A%0A%23include+%3Ciostream%3E%0A%0Atemplate+%3Ctypename...+Args%3E%0Avoid+print(Args%26%26...+value)+%7B%0A++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main(int+argc,+char*+argv%5B%5D)+%7B%0A++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++auto+x+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22x+%3D+%22,+x)%3B%0A++auto+y+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22y+%3D+%22,+y)%3B%0A++auto+constraint1+%3D+prog.AddConstraint(x+%2B+y+%3E%3D+1)%3B%0A++print(%22constraint1:+%22,+constraint1)%3B%0A++auto+constraint2+%3D+prog.AddConstraint(x+%2B+y+%3C%3D+0)%3B%0A++print(%22constraint2:+%22,+constraint2)%3B%0A++auto+cost1+%3D+prog.AddCost(x)%3B%0A++print(%22cost1:+%22,+cost1)%3B%0A%0A++auto+result+%3D+drake::solvers::Solve(prog)%3B%0A++print(%22Success:+%22,+result.is_success())%3B%0A++print(%22Solution+result:+%22,+result.get_solution_result())%3B%0A++return+0%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4 ][here]].
 * Advanced tutorials
