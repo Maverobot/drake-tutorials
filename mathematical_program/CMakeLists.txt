@@ -1,2 +1,8 @@
 add_executable(basics basics.cpp)
 target_link_libraries(basics PRIVATE drake::drake utils)
+
+add_executable(simple_optimization_problem_feasible simple_optimization_problem_feasible.cpp)
+target_link_libraries(simple_optimization_problem_feasible PRIVATE drake::drake)
+
+add_executable(simple_optimization_problem_infeasible simple_optimization_problem_infeasible.cpp)
+target_link_libraries(simple_optimization_problem_infeasible PRIVATE drake::drake)
