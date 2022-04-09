@@ -1,5 +1,5 @@
 #+title: MathematicalProgram Tutorial
-#+options: tex:t
+#+setupfile: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
 
 * Background
 Many engineering problems can be formulated as mathematical optimization
