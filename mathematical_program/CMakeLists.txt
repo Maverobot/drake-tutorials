@@ -1,8 +1,11 @@
-add_executable(basics basics.cpp)
-target_link_libraries(basics PRIVATE drake::drake utils)
-
 add_executable(simple_optimization_problem_feasible simple_optimization_problem_feasible.cpp)
 target_link_libraries(simple_optimization_problem_feasible PRIVATE drake::drake)
 
 add_executable(simple_optimization_problem_infeasible simple_optimization_problem_infeasible.cpp)
 target_link_libraries(simple_optimization_problem_infeasible PRIVATE drake::drake)
+
+add_executable(manually_choosing_a_solver manually_choosing_a_solver.cpp)
+target_link_libraries(manually_choosing_a_solver PRIVATE drake::drake)
+
+add_executable(good_or_bad_initial_guess good_or_bad_initial_guess.cpp)
+target_link_libraries(good_or_bad_initial_guess PRIVATE drake::drake)

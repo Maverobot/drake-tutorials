@@ -231,4 +231,154 @@ Some optimization solution is infeasible (doesn't have a solution). For example 
 #+end_src
 
 To play around with it, launch compiler-explorer locally and click [[http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:29,positionColumn:1,positionLineNumber:29,selectionStartColumn:1,selectionStartLineNumber:29,startColumn:1,startLineNumber:29),source:'%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%23include+%3Cdrake/solvers/solve.h%3E%0A%0A%23include+%3Ciostream%3E%0A%0Atemplate+%3Ctypename...+Args%3E%0Avoid+print(Args%26%26...+value)+%7B%0A++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main(int+argc,+char*+argv%5B%5D)+%7B%0A++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++auto+x+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22x+%3D+%22,+x)%3B%0A++auto+y+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22y+%3D+%22,+y)%3B%0A++auto+constraint1+%3D+prog.AddConstraint(x+%2B+y+%3E%3D+1)%3B%0A++print(%22constraint1:+%22,+constraint1)%3B%0A++auto+constraint2+%3D+prog.AddConstraint(x+%2B+y+%3C%3D+0)%3B%0A++print(%22constraint2:+%22,+constraint2)%3B%0A++auto+cost1+%3D+prog.AddCost(x)%3B%0A++print(%22cost1:+%22,+cost1)%3B%0A%0A++auto+result+%3D+drake::solvers::Solve(prog)%3B%0A++print(%22Success:+%22,+result.is_success())%3B%0A++print(%22Solution+result:+%22,+result.get_solution_result())%3B%0A++return+0%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4 ][here]].
+
+**** Manually choosing a solver
+
+If you want to choose a solver yourself, rather than Drake choosing one for you, you could instantiate a solver explicitly, and call its =Solve=
+function. There are two apporaches to instantiate a solver. For example, if I want to solve a problem using the open-source solver [[https://github.com/coin-or/Ipopt][IPOPT]],
+I can instantiate the solver using either of the two approaches:
+1. The simplest approach is to call
+   #+begin_src cpp
+     #include <drake/solvers/ipopt_solver.h>
+     // ...
+     auto solver = drake::solvers::IpoptSolver();
+   #+end_src
+2. The second approach is to construct a solver with a given solver ID as
+   #+begin_src cpp
+     #include <drake/solvers/choose_best_solver.h>
+     // ...
+     auto solver = drake::solvers::MakeSolver(drake::solvers::IpoptSolver::id());
+   #+end_src
+
+A complete example:
+#+begin_src cpp
+  #include <drake/solvers/ipopt_solver.h>
+  #include <drake/solvers/mathematical_program.h>
+
+  #include <iostream>
+
+  template <typename... Args>
+  void print(Args&&... value) {
+    (std::cout << ... << value) << "\n---\n";
+  }
+
+  int main(int argc, char* argv[]) {
+    /*
+     ,* Solves a simple optimization problem
+     ,*
+     ,* min x(0)
+     ,*
+     ,* subject to x(0) + x(1) = 1
+     ,*            0 <= x(1) <= 1
+     ,*/
+    // Set up the optimization problem.
+    auto prog = drake::solvers::MathematicalProgram();
+    auto x = prog.NewContinuousVariables(2);
+    print("x = ", x);
+    auto constraint1 = prog.AddConstraint(x[0] + x[1] == 1);
+    print("constraint1: ", constraint1);
+    auto constraint2 = prog.AddConstraint(0 <= x[1]);
+    print("constraint2: ", constraint2);
+    auto constraint3 = prog.AddConstraint(x[1] <= 1);
+    print("constraint3: ", constraint3);
+    auto cost1 = prog.AddCost(x[0]);
+    print("cost1: ", cost1);
+
+    drake::solvers::IpoptSolver solver;
+    // The initial guess is [1, 1]. The third argument is the options for Ipopt solver, and we set no
+    // solver options.
+    Eigen::VectorXd initial_guess(2);
+    initial_guess << 1, 1;
+    auto result = solver.Solve(prog, initial_guess, std::nullopt);
+    print(result.get_solution_result());
+    print("x* = ", result.GetSolution(x));
+    print("Solver is ", result.get_solver_id().name());
+    print("Ipopt solver status: ", result.get_solver_details<drake::solvers::IpoptSolver>().status,
+          ", meaning ",
+          result.get_solver_details<drake::solvers::IpoptSolver>().ConvertStatusToString());
+    return 0;
+    ;
+  }
+#+end_src
+
+To play around with it, launch compiler-explorer locally and click [[http://localhost:10240/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGISVykrgAyeAyYAHI%2BAEaYxP4apAAOqAqETgwe3r7%2BgSlpjgKh4VEssfGSiXaYDhlCBEzEBFk%2BfgG2mPaFDPWNBMWRMXEJtg1NLTntCmP9YYNlw5UAlLaoXsTI7BzmAMxhyN5YANQmO27oxEwA1pgA9AqeAG5xCrd4KUkEAPoPtM/EADoEKdsCYNABBXb7Q6YE5nC7XO6/f6vFhMAgITBoxyiWhfJLEVDAS4sIEgsGQiFQhgHLzHU5uJzTYiYVjkqkQghYpIGLlwtwEACeSUYrEwAIlR3BxGACnZ4MeqDw6COBLCBAg0tl5gAbLqJQCjo8xF5MEsTgB2KwQo5HCDTdAgFBrAj8hlHA1us5Gk1mr1uE5mMwmACsbgYAFoo6Hw%2BZgztrZCLQARCkU9VHNFhCAZxrAZCkI7IBCNABURzzj1DVhDyfNJitFNtt1LTdt5aET0wCgrRzSLB5sNQnzwLDwAC90RlVYTovQWG2jq2be3M2EjqoIBolovl%2BDbUu%2B15otoaq6iBut/XLJeuPWdsmjlxdwfX2%2BNF7H5u75%2Bn7vbm2ty3EcQiYK6XhJEcGJDiOY6Tt0M6oHOWIAm2TBeBeBJEnCj4IjcTrIi8ToALLopi2J4LiyiEsSrAQDuCZoRhqAbjhiHAACESYAA7h4ghhF4awKAAao0eBMMhCgQGYDGJraaqCBAcaqGxcaFqoslMReaAMMyTDqlwbFYRx4LoO4Ah6eqECqNWGiho%2B1gbtWz61jhpyPnepxyTOVlxjplmCFwICBmYhb%2BQQlwGZpK7odpFkRfpghmEZNEAqZ5m6QlVkfgy7lOSGFguXWXltgpGp%2BfFkVJcFalFpViUEDJJUxcxdWZVVBA7ClRJpWZfEBRqNkFUVv6eYxK5lUpQbhR1Ow1UGYX1eqOzRfuFatWg0yGXlxm9eZ0zWbZ9mrfJxC%2BdNqQEEFIWLVtq1tnh7AgIRxAKE6ACSHzCF2xB9j9zVrUBRwACqYkcYTpGIRzAKaCg9ngPbOYWRWGqDsIYngxAqnmPiMK6CNQWDw7dD2/C/Z9xN/X8cSFoYKrcbCSiugwqCAcBL1HMTGQKKhK7YHgwCME6wlniQAAaKoQ44YhfDD3ZSU141rVL4l4nLcP%2Bk%2ByMA7asUsSyCheLQrp5S9AKdtTEDGYWKsy%2BrCiFg6ToMEbtDEydPmKQbRsEACgvfL8GEZF83vG/RHuTcp5Z5bVoe%2BwA4mBFtBwI1lLBHZ2KXGFv/ODiMLUccd%2B2BPw/V8yr0QCzBsOHOue%2BVQYU58VO59M6JeG9N2F92PvFwHZdYA0dByvClz4c9P1vSATffdTxAgpXbcEB3pCLm%2BtVsIYYTADda%2BvkX/ul3PXyD/ptAj%2BcY9PS9U8zzncQL0sAJ8f8wgNMvCjA6g9SZ8AtdK7aFky9iAMCOHZABcJEwNlTBCDgKxaCcBDLwPwHAtCkFQJwNw1hHIPHWJsQMOweCkAIJoOBKwrggBDJIAEGgdQ7AAJwWkkAADjMPQkMFoQxmEkNIBBHBJDINIegzgvA3qJBIaguBpA4CwCQGgAcdAaYUAgPIpIij4jAHoXwOgXJXqUGiEI6IYRGiCk4EQ%2BRbBBAAHkGC0FMZI0gWA0RGHEA4/ALJajPDeg4zAqgagYS2Gg9UnQhG0DwNES4xBBQeCwEIiKo4zFSKoAYWUwk8A8SsSKFBRD%2BCCBEGIdgUgZCCEUCodQDjdCBAMEYFA2DLD6HCW9WA1d2CYAFowUg/xOA7B2BaKREAWkgEep04Y3AuBaHTugkcFlOARgdO5UwlhrBcD6R0LoGQXAMHMtkPwgQQhzFKOUPQ%2BR0gCAmLs5IqRTkMAGIc4YgRqi1AEL0cYnhWh6Eed0F5swShDHiA8mY5yPkzFuX8iQKxcEbEKcQlkWweDwMQYIhxGCODADqRYI49C7RYKWfUo4uBCAkAIYEI4HgFH0F%2BrsO8vAJETOkUgF0SQMLkEoKo9RehMD4CIP84pwhcSFOkLk%2BQSg1BxNhYk0g3FLhJESQijgSDSAoLQSiqxGEmWulQFQaG6LMXYtQOSuIxKlg0tIZMihkgQwAnoTsHUGgzAhhWRoSQ3DOE6n0JwARpAWASA0IkJVvAUWiL0LSsh7qOBmCRcqkRxDTUrBRBsyQQA][here]].
+
+Note that =solver.Solve()= expects three input arguments, the optimization program =prog=, the initial guess of the decision variable
+values (=[1, 1]= in this case), and an optional setting for the solver (=None= in this case, we use the default IPOPT setting). If you don't
+have an initial guess, you could call =solver.Solve(prog)=. Drake will choose a default initial guess (a 0-valued vector), but this initial
+guess might be a bad starting point for optimization. Note from the following example code, with the default initial guess, the solver
+cannot find a solution, even though a solution exists (and could be found with initial guess [1, 1]).
+
+#+begin_src cpp
+  auto result = solver.Solve(prog);
+  print(result.get_solution_result());
+  print("x* = ", result.GetSolution(x));
+  /*
+   ,* Output:
+   ,* SolutionFound
+   ,* ---
+   ,* x* = -9.99e-09
+   ,*         1
+   ,*/
+#+end_src
+
+Also note that if we know which solver is called, then we can access some solver-specific result, by calling =result.get_solver_details()=.
+For example, =IpoptSolverDetails= contains a field =status=, namely the status code of the IPOPT solver, we could access this info by
+
+#+begin_src cpp
+  print("Ipopt solver status: ", result.get_solver_details<drake::solvers::IpoptSolver>().status,
+        ", meaning ",
+        result.get_solver_details<drake::solvers::IpoptSolver>().ConvertStatusToString());
+#+end_src
+
+Each solver has its own details. You should refer to =FooSolverDetails= class on what is stored inside the return argument of
+=result.get_solver_details()=. For example, if you know that IPOPT is called, then refer to =IpoptSolverDetails= class; for OSQP solver, refer
+to =OsqpSolverDetails=, etc.
+
+*** Using an initial guess
+
+Some optimization problems, such as nonlinear optimization, require an initial guess. Other types of problems, such as quadratic programming,
+mixed-integer optimization, etc, can be solved faster if a good initial guess is provided. The user could provide an initial guess as an input
+argument in =Solve= function. If no initial guess is provided, Drake will use a zero-valued vector as the initial guess.
+
+In the example below, we show that an initial guess could affect the result of the problem. Without an user-provided initial guess, the
+solver might be unable to find the solution.
+
+#+begin_src cpp
+  #include <drake/solvers/ipopt_solver.h>
+  #include <drake/solvers/mathematical_program.h>
+
+  #include <iostream>
+
+  template <typename... Args>
+  void print(Args&&... value) {
+    (std::cout << ... << value) << "\n---\n";
+  }
+
+  int main(int argc, char* argv[]) {
+    // Set up the optimization problem.
+    auto prog = drake::solvers::MathematicalProgram();
+    auto x = prog.NewContinuousVariables(2);
+    prog.AddConstraint(pow(x[0], 2) + pow(x[1], 2) == 100.);
+    prog.AddCost(pow(x[0], 2) - pow(x[1], 2));
+    auto solver = drake::solvers::IpoptSolver();
+    // The user doesn't provide an initial guess.
+    auto result = solver.Solve(prog, std::nullopt, std::nullopt);
+    print("Without a good initial guess, success? ", result.is_success());
+    print("Solution:", result.GetSolution(x));
+    // Pass an initial guess
+    Eigen::VectorXd initial_guess(2);
+    initial_guess << -5, 0;
+    result = solver.Solve(prog, initial_guess, std::nullopt);
+    print("With a good initial guess, success? ", result.is_success());
+    print("Solution:", result.GetSolution(x));
+    return 0;
+    ;
+  }
+#+end_src
+
+To play around with it, launch compiler-explorer locally and click [[http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:31,positionColumn:1,positionLineNumber:31,selectionStartColumn:1,selectionStartLineNumber:31,startColumn:1,startLineNumber:31),source:'%23include+%3Cdrake/solvers/ipopt_solver.h%3E%0A%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%0A%23include+%3Ciostream%3E%0A%0Atemplate+%3Ctypename...+Args%3E%0Avoid+print(Args%26%26...+value)+%7B%0A++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main(int+argc,+char*+argv%5B%5D)+%7B%0A++//+Set+up+the+optimization+problem.%0A++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++auto+x+%3D+prog.NewContinuousVariables(2)%3B%0A++prog.AddConstraint(pow(x%5B0%5D,+2)+%2B+pow(x%5B1%5D,+2)+%3D%3D+100.)%3B%0A++prog.AddCost(pow(x%5B0%5D,+2)+-+pow(x%5B1%5D,+2))%3B%0A++auto+solver+%3D+drake::solvers::IpoptSolver()%3B%0A++//+The+user+doesn!'t+provide+an+initial+guess.%0A++auto+result+%3D+solver.Solve(prog,+std::nullopt,+std::nullopt)%3B%0A++print(%22Without+a+good+initial+guess,+success%3F+%22,+result.is_success())%3B%0A++print(%22Solution:%22,+result.GetSolution(x))%3B%0A++//+Pass+an+initial+guess%0A++Eigen::VectorXd+initial_guess(2)%3B%0A++initial_guess+%3C%3C+-5,+0%3B%0A++result+%3D+solver.Solve(prog,+initial_guess,+std::nullopt)%3B%0A++print(%22With+a+good+initial+guess,+success%3F+%22,+result.is_success())%3B%0A++print(%22Solution:%22,+result.GetSolution(x))%3B%0A++return+0%3B%0A++%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4 ][here]].
+
+For more details on setting the initial guess, the user could refer to [[./nonlinear_program.ipynb][Nonlinear program]] section =Setting the initial guess=.
+
 * Advanced tutorials
