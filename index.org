@@ -3,6 +3,35 @@
 
 This is the unofficial C++ version of the [[https://deepnote.com/project/Tutorials-K0_FCa7yQX2kDWBx3-2RmQ/%2Findex.ipynb][Drake Tutorials]].
 
-The list of tutorials:
+For an overview about the philosophy behind [[https://drake.mit.edu][Drake]], consider reading this [[https://medium.com/toyotaresearch/drake-model-based-design-in-the-age-of-robotics-and-machine-learning-59938c985515][blog post]]. We have organized the tutorials around the three major
+components described in that post:
 
-- [[file:mathematical_program.org][Mathematical Program]]
+** Mathematical Programming
+- [[file:mathematical_program.org][MathematicalProgram]]
+- Setting solver parameters
+- Updating costs and constraints (e.g. for efficient solving of many similar programs)
+- Debugging tips
+- Linear program
+- Quadratic program
+- Nonlinear program
+- Sum-of-squares optimization
+
+** Multibody Dynamics
+- Mathematical programming with MultibodyPlant
+- PyPlot animation
+- Rendering MultibodyPlant
+
+More multibody tutorials coming soon!
+
+** Dynamical Systems
+- Modeling Dynamical Systems
+
+More systems tutorials coming soon!
+
+** Additional resources
+
+- [[https://drake.mit.edu/doxygen_cxx/index.html][C++ API]] documentation
+- [[https://drake.mit.edu/pydrake/index.html][Python API]] documentation
+- MIT 6.800 [[https://manipulation.mit.edu][Robotic Manipulation]] course notes
+- MIT 6.832 [[https://underactuated.mit.edu][Underactuated Robotics]] course notes
+- [[https://drake.mit.edu/getting_help.html][Getting help]]
