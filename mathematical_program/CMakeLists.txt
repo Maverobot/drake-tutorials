@@ -9,3 +9,6 @@ target_link_libraries(manually_choosing_a_solver PRIVATE drake::drake)
 
 add_executable(good_or_bad_initial_guess good_or_bad_initial_guess.cpp)
 target_link_libraries(good_or_bad_initial_guess PRIVATE drake::drake)
+
+add_executable(add_callback add_callback.cpp)
+target_link_libraries(add_callback PRIVATE drake::drake)
