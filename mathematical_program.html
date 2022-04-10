@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MathematicalProgram Tutorial</title>
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">MathematicalProgram Tutorial</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgb2e90f2">Background</a></li>
+<li><a href="#org0780dc3">Basics of MathematicalProgram class</a>
+<ul>
+<li><a href="#org9a52351">Initialize a MathematicalProgram object</a></li>
+<li><a href="#org1f03204">Adding decision variables</a></li>
+<li><a href="#org6c86819">Adding constraints</a>
+<ul>
+<li><a href="#org0cd56cf">AddConstraint</a></li>
+</ul>
+</li>
+<li><a href="#org8c013f1">Adding Cost functions</a>
+<ul>
+<li><a href="#org127e6ba">AddCost method</a></li>
+</ul>
+</li>
+<li><a href="#org6fc1f79">Solve the optimization problem</a>
+<ul>
+<li><a href="#org025db52">Automatically choosing a solver</a></li>
+<li><a href="#org54ab120">Manually choosing a solver</a></li>
+</ul>
+</li>
+<li><a href="#org3f36e72">Using an initial guess</a></li>
+</ul>
+</li>
+<li><a href="#org77d8b8a">Add callback</a></li>
+<li><a href="#org3051a1c">Advanced tutorials</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb2e90f2" class="outline-2">
+<h2 id="orgb2e90f2">Background</h2>
+<div class="outline-text-2" id="text-orgb2e90f2">
+<p>
+Many engineering problems can be formulated as mathematical optimization
+problems, and solved by numerical solvers. A generic mathematical
+optimization problem can be formulated as
+</p>
+
+<p>
+\(\begin{aligned} \begin{array}{rl}  \min_x \; & f(x)  \\\text{subject to} \; & x \in\mathcal{S}  \end{array}  \qquad  \boxed{  \begin{array}{ll}  \text{The real-valued decision variable is} &x\\  \text{The real-valued cost function is} &f(x)\\  \text{The constraint set is} &\mathcal{S}\\  \text{The optimal } x \text{ that minimizes the cost function is} &x^*  \end{array}  } \end{aligned}\)
+</p>
+
+<p>
+where \(x\) is the real-valued decision variable(s), \(f(x)\) is the
+real-valued <i>cost function</i>, \(\mathcal{S}\) is the constraint set for
+\(x\). Our goal is to find the optimal \(x^*\) within the constraint set
+\(\mathcal{S}\), such that \(x^*\) minimizes the cost function \(f(x)\).
+</p>
+
+<p>
+For example, the following optimization problem determines the value of
+\(x\) that minimizes \(x^3 + 2x + 1\) subject to \(x \ge 1\).
+\(\begin{aligned} \begin{array}{rl} \min_x\;&x^3 + 2x + 1\\ \text{subject to}\;\;&x \ge 1 \end{array} \quad \boxed{  \begin{array}{ll}  \text{The real-valued decision variable is} & x\\  \text{The real-valued cost function }f(x) \text{ is} & x^3 + 2x + 1\\  \text{The set }\mathcal{S} \text{ of constraints is} & x \ge 1\\  \text{The value that minimizes the cost function is} & x^* = 1  \end{array} } \end{aligned}\)
+</p>
+
+<p>
+In general, how an optimization problem is solved depends on its
+categorization (categories include Linear Programming, Quadratic
+Programming, Mixed-integer Programming, etc.). Categorization depends on
+properties of both the cost function \(f(x)\) and the constraint set
+\(\mathcal{S}\). For example, if the cost function \(f(x)\) is a linear
+function of \(x\), and the constraint \(\mathcal{S}\) is a linear set
+\(\mathcal{S} = \{x | Ax\le b\}\), then we have a <i>linear programming</i>
+problem, which is efficiently solved with certain solvers.
+</p>
+
+<p>
+There are multiple solvers for each category of optimization problems,
+but each solver has its own API and data structures. Frequently, users
+need to rewrite code when they switch solvers. To remedy this, Drake
+provides a common API through the <i>MathematicalProgram</i> class. In
+addition to avoiding solver-specific code, the constraint and cost
+functions can be written in symbolic form (which makes code more
+readable). In these ways, Drake's MathematicalProgram is akin to
+<a href="https://yalmip.github.io/">YALMIP</a> in MATLAB or
+<a href="https://github.com/JuliaOpt/JuMP.jl">JuMP</a> in Julia, and we support
+both Python and C++. Note: Drake supports many
+<a href="https://drake.mit.edu/doxygen_cxx/group__solvers.html">solvers</a> (some
+are open-source and some require a license).
+</p>
+
+<p>
+Drake can formulate and solve the following categories of optimization
+problems
+</p>
+<ul class="org-ul">
+<li>Linear programming</li>
+<li>Quadratic programming</li>
+<li>Second-order cone programming</li>
+<li>Nonlinear nonconvex programming</li>
+<li>Semidefinite programming</li>
+<li>Sum-of-squares programming</li>
+<li>Mixed-integer programming (mixed-integer linear programming, mixed-integer quadratic programming, mixed-integer second-order cone programming).</li>
+<li>Linear complementarity problem</li>
+</ul>
+
+<p>
+This tutorial provides the basics of Drake's MathematicalProgram.
+Advanced tutorials are available at the <a href="#org3051a1c">bottom</a> of this document.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0780dc3" class="outline-2">
+<h2 id="org0780dc3">Basics of MathematicalProgram class</h2>
+<div class="outline-text-2" id="text-org0780dc3">
+<p>
+Drake's MathematicalProgram class contains the mathematical formulation of an optimization problem,
+namely the decision variables \(x\), the cost function \(f(x)\), and the constraint set \(\mathcal{S}\).
+</p>
+</div>
+
+<div id="outline-container-org9a52351" class="outline-3">
+<h3 id="org9a52351">Initialize a MathematicalProgram object</h3>
+<div class="outline-text-3" id="text-org9a52351">
+<p>
+To initialize this class, first create an empty MathematicalProgram as
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #005F00;">"drake/solvers/mathematical_program.h"</span>
+<span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">...</span>
+<span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::<span style="color: #1F55A0;">MathematicalProgram</span> <span style="color: #004651;">prog</span>;
+<span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">...</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1f03204" class="outline-3">
+<h3 id="org1f03204">Adding decision variables</h3>
+<div class="outline-text-3" id="text-org1f03204">
+<p>
+Shown below, the function <code>NewContinuousVariables</code> adds two new continuous decision variables to <code>prog</code>.  The newly added variables are returned as <code>x</code> (<code>VectorXDecisionVariable</code>).
+Note the range of the variable is a continuous set, as opposed to binary variables which only take discrete value 0 or 1.
+</p>
+
+<p>
+The default names of the variable in <b>x</b> are "x(0)" and "x(1)".  The next line prints the default names and types in <code>x</code>,
+whereas the second line prints the symbolic expression "1 + 2x[0] + 3x[1] + 4x[1]".
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #1F55A0;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #1F55A0;">)</span>;
+<span style="color: #AF005F;">std</span>::cout &lt;&lt; x &lt;&lt; <span style="color: #005F00;">"\n"</span>;
+<span style="color: #004700; font-style: italic;">/**</span>
+<span style="color: #004700; font-style: italic;"> * </span><span style="color: #AF005F; font-style: italic;">Output</span><span style="color: #004700; font-style: italic;">:</span>
+<span style="color: #004700; font-style: italic;"> * x(0)</span>
+<span style="color: #004700; font-style: italic;"> * x(1)</span>
+<span style="color: #004700; font-style: italic;"> */</span>
+
+<span style="color: #AF005F;">std</span>::cout &lt;&lt; <span style="color: #D75F00; font-weight: bold;">1</span> + <span style="color: #D75F00; font-weight: bold;">2</span> * x<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">]</span> + <span style="color: #D75F00; font-weight: bold;">3</span> * x<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">]</span> + <span style="color: #D75F00; font-weight: bold;">4</span> * x<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">]</span> &lt;&lt; <span style="color: #005F00;">"\n"</span>;
+<span style="color: #004700; font-style: italic;">/**</span>
+<span style="color: #004700; font-style: italic;"> * </span><span style="color: #AF005F; font-style: italic;">Output</span><span style="color: #004700; font-style: italic;">:</span>
+<span style="color: #004700; font-style: italic;"> * (1 + 2 * x(0) + 7 * x(1))</span>
+<span style="color: #004700; font-style: italic;"> */</span>
+</pre>
+</div>
+
+<p>
+To create an array <code>y</code> of two variables named "dog(0)"" and "dog(1)", pass the name "dog" as a second argument to <code>NewContinuousVariables()</code>.
+Also shown below is the printout of the two variables in <code>y</code> and a symbolic expression involving <code>y</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #D70000;">auto</span> <span style="color: #004651;">y</span> = prog.NewContinuousVariables<span style="color: #1F55A0;">(</span><span style="color: #D75F00; font-weight: bold;">2</span>, <span style="color: #005F00;">"dog"</span><span style="color: #1F55A0;">)</span>;
+<span style="color: #AF005F;">std</span>::cout &lt;&lt; y &lt;&lt; <span style="color: #005F00;">"\n"</span>;
+<span style="color: #004700; font-style: italic;">/**</span>
+<span style="color: #004700; font-style: italic;"> * </span><span style="color: #AF005F; font-style: italic;">Output</span><span style="color: #004700; font-style: italic;">:</span>
+<span style="color: #004700; font-style: italic;"> * dog(0)</span>
+<span style="color: #004700; font-style: italic;"> * dog(1)</span>
+<span style="color: #004700; font-style: italic;"> */</span>
+
+<span style="color: #AF005F;">std</span>::cout &lt;&lt; y<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">]</span> + y<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">]</span> + y<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">]</span> * y<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">]</span> * y<span style="color: #1F55A0;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">]</span> &lt;&lt; <span style="color: #005F00;">"\n"</span>;
+<span style="color: #004700; font-style: italic;">/**</span>
+<span style="color: #004700; font-style: italic;"> * </span><span style="color: #AF005F; font-style: italic;">Output</span><span style="color: #004700; font-style: italic;">:</span>
+<span style="color: #004700; font-style: italic;"> * (2 * dog(0) + pow(dog(1), 3))</span>
+<span style="color: #004700; font-style: italic;"> */</span>
+</pre>
+</div>
+
+<p>
+To create a \(3 \times 2\) matrix of variables named "A", type
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #D70000;">auto</span> <span style="color: #004651;">var_matrix</span> = prog.NewContinuousVariables<span style="color: #1F55A0;">(</span><span style="color: #D75F00; font-weight: bold;">3</span>, <span style="color: #D75F00; font-weight: bold;">2</span>, <span style="color: #005F00;">"A"</span><span style="color: #1F55A0;">)</span>;
+<span style="color: #AF005F;">std</span>::cout &lt;&lt; var_matrix &lt;&lt; <span style="color: #005F00;">"\n"</span>;
+<span style="color: #004700; font-style: italic;">/**</span>
+<span style="color: #004700; font-style: italic;"> * </span><span style="color: #AF005F; font-style: italic;">Output</span><span style="color: #004700; font-style: italic;">:</span>
+<span style="color: #004700; font-style: italic;"> * A(0,0) A(0,1)</span>
+<span style="color: #004700; font-style: italic;"> * A(1,0) A(1,1)</span>
+<span style="color: #004700; font-style: italic;"> * A(2,0) A(2,1)</span>
+<span style="color: #004700; font-style: italic;"> */</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6c86819" class="outline-3">
+<h3 id="org6c86819">Adding constraints</h3>
+<div class="outline-text-3" id="text-org6c86819">
+<p>
+There are many ways to impose constraints on the decision variables. This tutorial shows a few simple examples.
+Refer to the links at the <a href="#org3051a1c">bottom</a> of this document for other types of constraints.
+</p>
+</div>
+
+<div id="outline-container-org0cd56cf" class="outline-4">
+<h4 id="org0cd56cf">AddConstraint</h4>
+<div class="outline-text-4" id="text-org0cd56cf">
+<p>
+The simplest way to add a constraint is with <code>MathematicalProgram.AddConstraint()</code>.
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Add an equality constraint</span>
+prog.AddConstraint<span style="color: #1F55A0;">(</span>x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #AF005F;">]</span> * x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">]</span> == <span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">)</span>
+</pre>
+</div>
+
+
+<p>
+You can also add inequality constraints to `prog` such as
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Add inequality constraints</span>
+prog.AddConstraint<span style="color: #1F55A0;">(</span>x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #AF005F;">]</span> &gt;= <span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">)</span>;
+prog.AddConstraint<span style="color: #1F55A0;">(</span>x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #AF005F;">]</span> - x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">]</span> &lt;= <span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-org8c013f1" class="outline-3">
+<h3 id="org8c013f1">Adding Cost functions</h3>
+<div class="outline-text-3" id="text-org8c013f1">
+<p>
+In a complicated optimization problem, it is often convenient to write the total cost function \(f(x)\) as a sum of individual cost functions
+</p>
+
+<p>
+\(\begin{aligned}
+f(x) = \sum_i g_i(x)
+\end{aligned}\)
+</p>
+</div>
+
+<div id="outline-container-org127e6ba" class="outline-4">
+<h4 id="org127e6ba">AddCost method</h4>
+<div class="outline-text-4" id="text-org127e6ba">
+<p>
+The simplest way to add an individual cost function \(g_i(x)\) to the total cost function \(f(x)\) is with the <code>MathematicalProgram.AddCost()</code> method (as shown below).
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Add a cost x(0)**2 + 3 to the total cost. Since prog doesn't have a cost before, now the total cost is x(0)**2 + 3</span>
+prog.AddCost<span style="color: #1F55A0;">(</span>x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #AF005F;">]</span> ** <span style="color: #D75F00; font-weight: bold;">2</span> + <span style="color: #D75F00; font-weight: bold;">3</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div>
+
+<p>
+To add another individual cost function \(x(0) + x(1)\) to the total cost function \(f(x)\), simply call <code>AddCost()</code> again as follows
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp">prog.AddCost<span style="color: #1F55A0;">(</span>x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #AF005F;">]</span> + x<span style="color: #AF005F;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">]</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div>
+
+<p>
+now the total cost function becomes \(x(0)^2 + x(0) + x(1) + 3\).
+</p>
+
+<p>
+<code>prog</code> can analyze each of these individual cost functions and determine that \(x(0) ^ 2 + 3\)  is a convex quadratic function, and \(x(0) + x(1)\) is a linear function of \(x\).
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6fc1f79" class="outline-3">
+<h3 id="org6fc1f79">Solve the optimization problem</h3>
+<div class="outline-text-3" id="text-org6fc1f79">
+<p>
+Once all the decision variables/constraints/costs are added to <code>prog</code>, we are ready to solve the optimization problem.
+</p>
+</div>
+<div id="outline-container-org025db52" class="outline-4">
+<h4 id="org025db52">Automatically choosing a solver</h4>
+<div class="outline-text-4" id="text-org025db52">
+<p>
+The simplest way to solve the optimization problem is to call <code>Solve()</code> function. Drake's MathematicalProgram analyzes the type of the constraints/costs,
+and then calls an appropriate solver for your problem. The result of calling `Solve()` is stored inside the return argument. Here is a code snippet
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/mathematical_program.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/solve.h</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">iostream</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #D70000;">template</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #D70000;">typename</span>... <span style="color: #1F55A0;">Args</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0;">void</span> <span style="color: #AF8700;">print</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">Args</span>&amp;&amp;... <span style="color: #004651;">value</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #AF005F;">(</span><span style="color: #AF005F;">std</span>::cout &lt;&lt; ... &lt;&lt; value<span style="color: #AF005F;">)</span> &lt;&lt; <span style="color: #005F00;">"\n---\n"</span>;
+<span style="color: #1F55A0;">}</span>
+
+<span style="color: #1F55A0;">int</span> <span style="color: #AF8700;">main</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">int</span> <span style="color: #004651;">argc</span>, <span style="color: #1F55A0;">char</span>* <span style="color: #004651;">argv</span><span style="color: #AF005F;">[]</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #4E4E4E; font-style: italic;">/*</span>
+<span style="color: #4E4E4E; font-style: italic;">   * Solves a simple optimization problem</span>
+<span style="color: #4E4E4E; font-style: italic;">   *    min x(0)^2 + x(1)^2</span>
+<span style="color: #4E4E4E; font-style: italic;">   * subject to x(0) + x(1) = 1</span>
+<span style="color: #4E4E4E; font-style: italic;">   *        x(0) &lt;= x(1)</span>
+<span style="color: #4E4E4E; font-style: italic;">   */</span>
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Set up the optimization problem.</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">prog</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::MathematicalProgram<span style="color: #AF005F;">()</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  prog.AddConstraint<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #005F00;">]</span> + x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span> == <span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">)</span>;
+  prog.AddConstraint<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #005F00;">]</span> &lt;= x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span><span style="color: #AF005F;">)</span>;
+  prog.AddCost<span style="color: #AF005F;">(</span>pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span> + pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Now solve the optimization problem.</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">result</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::Solve<span style="color: #AF005F;">(</span>prog<span style="color: #AF005F;">)</span>;
+
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">print out the result.</span>
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Success? "</span>, result.is_success<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Print the solution to the decision variables.</span>
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"x* = "</span>, result.GetSolution<span style="color: #005F00;">(</span>x<span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Print the optimal cost.</span>
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"optimal cost = "</span>, result.get_optimal_cost<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Print the name of the solver that was called.</span>
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"solver is: "</span>, result.get_solver_id<span style="color: #005F00;">()</span>.name<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">return</span> <span style="color: #D75F00; font-weight: bold;">0</span>;
+<span style="color: #1F55A0;">}</span>
+</pre>
+</div>
+
+<p>
+Notice that we can then retrieve optimization result from the return argument of <code>Solve</code>. For example, the solution \(x^*\) is retrieved from <code>result.GetSolution()</code>,
+and the optimal cost from <code>result.get_optimal_cost()</code>. To play around with it, <a href="https://github.com/Maverobot/docker-compiler-explorer-drake#usage">launch compiler-explorer locally</a> and click <a href="http://localhost:10240/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGIMwAcpK4AMngMmAByPgBGmMQS0gAOqAqETgwe3r7%2BQSlpjgJhEdEscQlStpj2hQxCBEzEBFk%2BfoFVNRn1jQTFUbHxibYNTS057QojveH9ZYNSAJS2qF7EyOwc5gDM4cjeWADUJltu6MRMANaYAPQKngBu8QrXLEwECJivjqK0APpJxFQwHOLAAdAhjtgTBoAILbXb7TBHE5nS43O60R7EZ4Yx7gyHQuGw%2BEMPZeQ7HNxOSbETCsAnE2EET5JAzM5FuAgATySjFYmFBgoOMOIwAUDJh91QeHQBwB4QIEBFYvMADY1YLQQd7mIvJgFkcAOxWWEHA4QSboEAoFYEDmUg6a%2B0nbW6/XOtxHMxmEwAVjcDAAtMG/QHzD6tia4YaACKEwkKg6vcIQRONYDIUgHZAIRoAKgO6fufqsvpjBpMxsJZuueerZoLQgemAUhYOaRYrKRqCSjhYeAAXm8MnLATF6Cx6wcC2ak%2BEDqoIBoFn7sGYvRYFxAuCvfWupwWFF4YtpMA4DkQt8uN1ud8iYwcuAfZy%2BrxWTscH4udwfrvXrtcBxCJgdpeEkF4fAcPZ9oOw4CKOqDjp8oL1kwXiXgCQL3gcqJXNauJPNaACybwfF8eA/MogLAqwEArpGqHoagC7YZhwCgpEmAAO4eII4ReCsCgAGqNHgTBIQoEBmPRUZmvKggQOGqjYeGWaqDJjGXmgDA0kwCpcKx1GgjC6DuAIukKhAqglhofoPtYC4lk%2BZb3p%2Bj4aaao6WeG2kWYIXAgF6ZhZr5BDnPpHkwmaaFaeZYV6YI65uWxxmmbxfmKtZvoWLZLmUm5WUWM55bHLJXkKT5cXhYlgWqdmVUJQQ0mlZpzFoJMBnJUZJlmZMEApFxVk2XZWbSTeA1DdlxWjQskVycQ3neu1BABUFIWpCtkX/oBkSoFx7bNhB3a9ng/ZDrUCFIWCrUHLSR60Habm4ewIAEdi1pNpimD9dRW2eQB5V2raR23S2XgPShnnyYq4ZCF4yDrAoCi1d6WZ3eDBCgngCi/EeCMtpJs0tf9gFUYm7xIhi6EjpeFM4We2MjjqC3ifQCiQ1FgOKd6qgFm5dXoxDADiIGfdTAhWUTDEkwcZOCCD0GnWI9WTBz82LWYiuvLQKuPVs9mo6D92Y8AIG/FrYi/MtdFzQcANy3adPMGwUFUCDb0QW8BxcUwrY/PQ6Bq1z4Ye9jKPBUbGOgqbBC482xC/DKdGgs731S2VtIEKsDAHLZ0vRnGsIcEstCcL6vB%2BBwWikKgnBuNYDl3Ks6xelsPCkAQmjF0sFwgL6kighoqpbAAnIakgBGYI%2B%2BoavpmJI0ilxwkgV13NecLwyMaB3XdLHAsBIGgnZ0PE5CUEfSQnwkwAj3wdDMu9EAxGvMThI0XKcO3R9sIIADyDC0A/lXXgWBXhGHEMA0g%2BBaQODwI8ZGkDMCqDPOhDY1cFTVDXrQPAMRzjEC5B4LAa8wqnU/sXPgBgxRCTwNxX%2BvJK7t34IIEQYh2CVCYfIJQag166C4PoQwxgG6WH0Dg5GsBU4gEwHgU2DBSBYk4FsLYhpyEQAkc9ORgxuBcC0LNGuJ1zKcEDJaT8phLDWC4MojoZ5aguAYGZbIfg%2BGhBmKUcoeh8jpAEGMRxpAPG1D6K4%2BYVjYECG6KMTwrQ9B2GsV0KYASBgVGGD0bxUS4kuISRIJYTc1hsI7rSDYPAS5l1XpA2uHBgBCM3CPc09czHCIOLgQgJBW58IOB4Y%2B9BiAtIWLwTuwC95IFtEkdCZ8IAXyvnoTA%2BAiCJI4Sw8Q7DZCKBUOoSBYVMAFN4Fxc4SQyFFI4OXUgldq5lN/uhYZQM3YVLqVUmpqAOnxG6b03ePcQCSF9KCEeWxVQaDML6CxGhJDz1nqqfQnAV6kBYBIDQ29jm8DKZvPQfSdH7LMCUk5G8d79KWFiNIzhJBAA%3D">here</a>.
+</p>
+
+<p>
+Some optimization solution is infeasible (doesn't have a solution). For example in the following code example, <code>result.get_solution_result()</code> will not report <code>kSolutionFound</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #4E4E4E; font-style: italic;">/*</span>
+<span style="color: #4E4E4E; font-style: italic;"> * An infeasible optimization problem.</span>
+<span style="color: #4E4E4E; font-style: italic;"> */</span>
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">prog</span> = MathematicalProgram<span style="color: #1F55A0;">()</span>;
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #1F55A0;">(</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">)[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">]</span>;
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">y</span> = prog.NewContinuousVariables<span style="color: #1F55A0;">(</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">)[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">]</span>;
+prog.AddConstraint<span style="color: #1F55A0;">(</span>x + y &gt;= <span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #1F55A0;">)</span>;
+prog.AddConstraint<span style="color: #1F55A0;">(</span>x + y &lt;= <span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #1F55A0;">)</span>;
+prog.AddCost<span style="color: #1F55A0;">(</span>x<span style="color: #1F55A0;">)</span>;
+
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">result</span> = Solve<span style="color: #1F55A0;">(</span>prog<span style="color: #1F55A0;">)</span>;
+print<span style="color: #1F55A0;">(</span><span style="color: #005F00;">"Success? "</span>, result.is_success<span style="color: #AF005F;">()</span><span style="color: #1F55A0;">)</span>;
+print<span style="color: #1F55A0;">(</span>result.get_solution_result<span style="color: #AF005F;">()</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div>
+
+<p>
+To play around with it, <a href="https://github.com/Maverobot/docker-compiler-explorer-drake#usage">launch compiler-explorer locally</a> and click <a href="http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:29,positionColumn:1,positionLineNumber:29,selectionStartColumn:1,selectionStartLineNumber:29,startColumn:1,startLineNumber:29),source:'%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%23include+%3Cdrake/solvers/solve.h%3E%0A%0A%23include+%3Ciostream%3E%0A%0Atemplate+%3Ctypename...+Args%3E%0Avoid+print(Args%26%26...+value)+%7B%0A++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main(int+argc,+char*+argv%5B%5D)+%7B%0A++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++auto+x+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22x+%3D+%22,+x)%3B%0A++auto+y+%3D+prog.NewContinuousVariables(1)%5B0%5D%3B%0A++print(%22y+%3D+%22,+y)%3B%0A++auto+constraint1+%3D+prog.AddConstraint(x+%2B+y+%3E%3D+1)%3B%0A++print(%22constraint1:+%22,+constraint1)%3B%0A++auto+constraint2+%3D+prog.AddConstraint(x+%2B+y+%3C%3D+0)%3B%0A++print(%22constraint2:+%22,+constraint2)%3B%0A++auto+cost1+%3D+prog.AddCost(x)%3B%0A++print(%22cost1:+%22,+cost1)%3B%0A%0A++auto+result+%3D+drake::solvers::Solve(prog)%3B%0A++print(%22Success:+%22,+result.is_success())%3B%0A++print(%22Solution+result:+%22,+result.get_solution_result())%3B%0A++return+0%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org54ab120" class="outline-4">
+<h4 id="org54ab120">Manually choosing a solver</h4>
+<div class="outline-text-4" id="text-org54ab120">
+<p>
+If you want to choose a solver yourself, rather than Drake choosing one for you, you could instantiate a solver explicitly, and call its <code>Solve</code>
+function. There are two apporaches to instantiate a solver. For example, if I want to solve a problem using the open-source solver <a href="https://github.com/coin-or/Ipopt">IPOPT</a>,
+I can instantiate the solver using either of the two approaches:
+</p>
+<ol class="org-ol">
+<li><p>
+The simplest approach is to call
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/ipopt_solver.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">...</span>
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">solver</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::IpoptSolver<span style="color: #1F55A0;">()</span>;
+</pre>
+</div></li>
+<li><p>
+The second approach is to construct a solver with a given solver ID as
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/choose_best_solver.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">...</span>
+<span style="color: #D70000;">auto</span> <span style="color: #004651;">solver</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::MakeSolver<span style="color: #1F55A0;">(</span><span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::<span style="color: #AF005F;">IpoptSolver</span>::id<span style="color: #AF005F;">()</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div></li>
+</ol>
+
+<p>
+A complete example:
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/ipopt_solver.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/mathematical_program.h</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">iostream</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #D70000;">template</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #D70000;">typename</span>... <span style="color: #1F55A0;">Args</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0;">void</span> <span style="color: #AF8700;">print</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">Args</span>&amp;&amp;... <span style="color: #004651;">value</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #AF005F;">(</span><span style="color: #AF005F;">std</span>::cout &lt;&lt; ... &lt;&lt; value<span style="color: #AF005F;">)</span> &lt;&lt; <span style="color: #005F00;">"\n---\n"</span>;
+<span style="color: #1F55A0;">}</span>
+
+<span style="color: #1F55A0;">int</span> <span style="color: #AF8700;">main</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">int</span> <span style="color: #004651;">argc</span>, <span style="color: #1F55A0;">char</span>* <span style="color: #004651;">argv</span><span style="color: #AF005F;">[]</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #4E4E4E; font-style: italic;">/*</span>
+<span style="color: #4E4E4E; font-style: italic;">   * Solves a simple optimization problem</span>
+<span style="color: #4E4E4E; font-style: italic;">   *</span>
+<span style="color: #4E4E4E; font-style: italic;">   * min x(0)</span>
+<span style="color: #4E4E4E; font-style: italic;">   *</span>
+<span style="color: #4E4E4E; font-style: italic;">   * subject to x(0) + x(1) = 1</span>
+<span style="color: #4E4E4E; font-style: italic;">   *            0 &lt;= x(1) &lt;= 1</span>
+<span style="color: #4E4E4E; font-style: italic;">   */</span>
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Set up the optimization problem.</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">prog</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::MathematicalProgram<span style="color: #AF005F;">()</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"x = "</span>, x<span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">constraint1</span> = prog.AddConstraint<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #005F00;">]</span> + x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span> == <span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"constraint1: "</span>, constraint1<span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">constraint2</span> = prog.AddConstraint<span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">0</span> &lt;= x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"constraint2: "</span>, constraint2<span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">constraint3</span> = prog.AddConstraint<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span> &lt;= <span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"constraint3: "</span>, constraint3<span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">cost1</span> = prog.AddCost<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #005F00;">]</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"cost1: "</span>, cost1<span style="color: #AF005F;">)</span>;
+
+  <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::<span style="color: #1F55A0;">IpoptSolver</span> <span style="color: #004651;">solver</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">The initial guess is [1, 1]. The third argument is the options for Ipopt solver, and we set no</span>
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">solver options.</span>
+  <span style="color: #AF005F;">Eigen</span>::<span style="color: #1F55A0;">VectorXd</span> <span style="color: #004651;">initial_guess</span><span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  initial_guess &lt;&lt; <span style="color: #D75F00; font-weight: bold;">1</span>, <span style="color: #D75F00; font-weight: bold;">1</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">result</span> = solver.Solve<span style="color: #AF005F;">(</span>prog, initial_guess, <span style="color: #AF005F;">std</span>::nullopt<span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span>result.get_solution_result<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"x* = "</span>, result.GetSolution<span style="color: #005F00;">(</span>x<span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Solver is "</span>, result.get_solver_id<span style="color: #005F00;">()</span>.name<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Ipopt solver status: "</span>, result.get_solver_details<span style="color: #005F00;">&lt;</span><span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::<span style="color: #1F55A0;">IpoptSolver</span><span style="color: #005F00;">&gt;()</span>.status,
+        <span style="color: #005F00;">", meaning "</span>,
+        result.get_solver_details<span style="color: #005F00;">&lt;</span><span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::<span style="color: #1F55A0;">IpoptSolver</span><span style="color: #005F00;">&gt;()</span>.ConvertStatusToString<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">return</span> <span style="color: #D75F00; font-weight: bold;">0</span>;
+  ;
+<span style="color: #1F55A0;">}</span>
+</pre>
+</div>
+
+<p>
+To play around with it, <a href="https://github.com/Maverobot/docker-compiler-explorer-drake#usage">launch compiler-explorer locally</a> and click <a href="http://localhost:10240/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGISVykrgAyeAyYAHI%2BAEaYxP4apAAOqAqETgwe3r7%2BgSlpjgKh4VEssfGSiXaYDhlCBEzEBFk%2BfgG2mPaFDPWNBMWRMXEJtg1NLTntCmP9YYNlw5UAlLaoXsTI7BzmAMxhyN5YANQmO27oxEwA1pgA9AqeAG5xCrd4KUkEAPoPtM/EADoEKdsCYNABBXb7Q6YE5nC7XO6/f6vFhMAgITBoxyiWhfJLEVDAS4sIEgsGQiFQhgHLzHU5uJzTYiYVjkqkQghYpIGLlwtwEACeSUYrEwAIlR3BxGACnZ4MeqDw6COBLCBAg0tl5gAbLqJQCjo8xF5MEsTgB2KwQo5HCDTdAgFBrAj8hlHA1us5Gk1mr1uE5mMwmACsbgYAFoo6Hw%2BZgztrZCLQARCkU9VHNFhCAZxrAZCkI7IBCNABURzzj1DVhDyfNJitFNtt1LTdt5aET0wCgrRzSLB5sNQnzwLDwAC90RlVYTovQWG2jq2be3M2EjqoIBolovl%2BDbUu%2B15otoaq6iBut/XLJeuPWdsmjlxdwfX2%2BNF7H5u75%2Bn7vbm2ty3EcQiYK6XhJEcGJDiOY6Tt0M6oHOWIAm2TBeBeBJEnCj4IjcTrIi8ToALLopi2J4LiyiEsSrAQDuCZoRhqAbjhiHAACESYAA7h4ghhF4awKAAao0eBMMhCgQGYDGJraaqCBAcaqGxcaFqoslMReaAMMyTDqlwbFYRx4LoO4Ah6eqECqNWGiho%2B1gbtWz61jhpyPnepxyTOVlxjplmCFwICBmYhb%2BQQlwGZpK7odpFkRfpghmEZNEAqZ5m6QlVkfgy7lOSGFguXWXltgpGp%2BfFkVJcFalFpViUEDJJUxcxdWZVVBA7ClRJpWZfEBRqNkFUVv6eYxK5lUpQbhR1Ow1UGYX1eqOzRfuFatWg0yGXlxm9eZ0zWbZ9mrfJxC%2BdNqQEEFIWLVtq1tnh7AgIRxAKE6ACSHzCF2xB9j9zVrUBRwACqYkcYTpGIRzAKaCg9ngPbOYWRWGqDsIYngxAqnmPiMK6CNQWDw7dD2/C/Z9xN/X8cSFoYKrcbCSiugwqCAcBL1HMTGQKKhK7YHgwCME6wlniQAAaKoQ44YhfDD3ZSU141rVL4l4nLcP%2Bk%2ByMA7asUsSyCheLQrp5S9AKdtTEDGYWKsy%2BrCiFg6ToMEbtDEydPmKQbRsEACgvfL8GEZF83vG/RHuTcp5Z5bVoe%2BwA4mBFtBwI1lLBHZ2KXGFv/ODiMLUccd%2B2BPw/V8yr0QCzBsOHOue%2BVQYU58VO59M6JeG9N2F92PvFwHZdYA0dByvClz4c9P1vSATffdTxAgpXbcEB3pCLm%2BtVsIYYTADda%2BvkX/ul3PXyD/ptAj%2BcY9PS9U8zzncQL0sAJ8f8wgNMvCjA6g9SZ8AtdK7aFky9iAMCOHZABcJEwNlTBCDgKxaCcBDLwPwHAtCkFQJwNw1hHIPHWJsQMOweCkAIJoOBKwrggBDJIAEGgdQ7AAJwWkkAADjMPQkMFoQxmEkNIBBHBJDINIegzgvA3qJBIaguBpA4CwCQGgAcdAaYUAgPIpIij4jAHoXwOgXJXqUGiEI6IYRGiCk4EQ%2BRbBBAAHkGC0FMZI0gWA0RGHEA4/ALJajPDeg4zAqgagYS2Gg9UnQhG0DwNES4xBBQeCwEIiKo4zFSKoAYWUwk8A8SsSKFBRD%2BCCBEGIdgUgZCCEUCodQDjdCBAMEYFA2DLD6HCW9WA1d2CYAFowUg/xOA7B2BaKREAWkgEep04Y3AuBaHTugkcFlOARgdO5UwlhrBcD6R0LoGQXAMHMtkPwgQQhzFKOUPQ%2BR0gCAmLs5IqRTkMAGIc4YgRqi1AEL0cYnhWh6Eed0F5swShDHiA8mY5yPkzFuX8iQKxcEbEKcQlkWweDwMQYIhxGCODADqRYI49C7RYKWfUo4uBCAkAIYEI4HgFH0F%2BrsO8vAJETOkUgF0SQMLkEoKo9RehMD4CIP84pwhcSFOkLk%2BQSg1BxNhYk0g3FLhJESQijgSDSAoLQSiqxGEmWulQFQaG6LMXYtQOSuIxKlg0tIZMihkgQwAnoTsHUGgzAhhWRoSQ3DOE6n0JwARpAWASA0IkJVvAUWiL0LSsh7qOBmCRcqkRxDTUrBRBsyQQA">here</a>.
+</p>
+
+<p>
+Note that <code>solver.Solve()</code> expects three input arguments, the optimization program <code>prog</code>, the initial guess of the decision variable
+values (<code>[1, 1]</code> in this case), and an optional setting for the solver (<code>None</code> in this case, we use the default IPOPT setting). If you don't
+have an initial guess, you could call <code>solver.Solve(prog)</code>. Drake will choose a default initial guess (a 0-valued vector), but this initial
+guess might be a bad starting point for optimization. Note from the following example code, with the default initial guess, the solver
+cannot find a solution, even though a solution exists (and could be found with initial guess [1, 1]).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #D70000;">auto</span> <span style="color: #004651;">result</span> = solver.Solve<span style="color: #1F55A0;">(</span>prog<span style="color: #1F55A0;">)</span>;
+print<span style="color: #1F55A0;">(</span>result.get_solution_result<span style="color: #AF005F;">()</span><span style="color: #1F55A0;">)</span>;
+print<span style="color: #1F55A0;">(</span><span style="color: #005F00;">"x* = "</span>, result.GetSolution<span style="color: #AF005F;">(</span>x<span style="color: #AF005F;">)</span><span style="color: #1F55A0;">)</span>;
+<span style="color: #4E4E4E; font-style: italic;">/*</span>
+<span style="color: #4E4E4E; font-style: italic;"> * Output:</span>
+<span style="color: #4E4E4E; font-style: italic;"> * SolutionFound</span>
+<span style="color: #4E4E4E; font-style: italic;"> * ---</span>
+<span style="color: #4E4E4E; font-style: italic;"> * x* = -9.99e-09</span>
+<span style="color: #4E4E4E; font-style: italic;"> *         1</span>
+<span style="color: #4E4E4E; font-style: italic;"> */</span>
+</pre>
+</div>
+
+<p>
+Also note that if we know which solver is called, then we can access some solver-specific result, by calling <code>result.get_solver_details()</code>.
+For example, <code>IpoptSolverDetails</code> contains a field <code>status</code>, namely the status code of the IPOPT solver, we could access this info by
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">print<span style="color: #1F55A0;">(</span><span style="color: #005F00;">"Ipopt solver status: "</span>, result.get_solver_details<span style="color: #AF005F;">&lt;</span><span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::IpoptSolver<span style="color: #AF005F;">&gt;()</span>.status,
+      <span style="color: #005F00;">", meaning "</span>,
+      result.get_solver_details<span style="color: #AF005F;">&lt;</span><span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::IpoptSolver<span style="color: #AF005F;">&gt;()</span>.ConvertStatusToString<span style="color: #AF005F;">()</span><span style="color: #1F55A0;">)</span>;
+</pre>
+</div>
+
+<p>
+Each solver has its own details. You should refer to <code>FooSolverDetails</code> class on what is stored inside the return argument of
+<code>result.get_solver_details()</code>. For example, if you know that IPOPT is called, then refer to <code>IpoptSolverDetails</code> class; for OSQP solver, refer
+to <code>OsqpSolverDetails</code>, etc.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3f36e72" class="outline-3">
+<h3 id="org3f36e72">Using an initial guess</h3>
+<div class="outline-text-3" id="text-org3f36e72">
+<p>
+Some optimization problems, such as nonlinear optimization, require an initial guess. Other types of problems, such as quadratic programming,
+mixed-integer optimization, etc, can be solved faster if a good initial guess is provided. The user could provide an initial guess as an input
+argument in <code>Solve</code> function. If no initial guess is provided, Drake will use a zero-valued vector as the initial guess.
+</p>
+
+<p>
+In the example below, we show that an initial guess could affect the result of the problem. Without an user-provided initial guess, the
+solver might be unable to find the solution.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/ipopt_solver.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/mathematical_program.h</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">iostream</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #D70000;">template</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #D70000;">typename</span>... <span style="color: #1F55A0;">Args</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0;">void</span> <span style="color: #AF8700;">print</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">Args</span>&amp;&amp;... <span style="color: #004651;">value</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #AF005F;">(</span><span style="color: #AF005F;">std</span>::cout &lt;&lt; ... &lt;&lt; value<span style="color: #AF005F;">)</span> &lt;&lt; <span style="color: #005F00;">"\n---\n"</span>;
+<span style="color: #1F55A0;">}</span>
+
+<span style="color: #1F55A0;">int</span> <span style="color: #AF8700;">main</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">int</span> <span style="color: #004651;">argc</span>, <span style="color: #1F55A0;">char</span>* <span style="color: #004651;">argv</span><span style="color: #AF005F;">[]</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Set up the optimization problem.</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">prog</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::MathematicalProgram<span style="color: #AF005F;">()</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  prog.AddConstraint<span style="color: #AF005F;">(</span>pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span> + pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span> == <span style="color: #D75F00; font-weight: bold;">100</span>.<span style="color: #AF005F;">)</span>;
+  prog.AddCost<span style="color: #AF005F;">(</span>pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span> - pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">solver</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::IpoptSolver<span style="color: #AF005F;">()</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">The user doesn't provide an initial guess.</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">result</span> = solver.Solve<span style="color: #AF005F;">(</span>prog, <span style="color: #AF005F;">std</span>::nullopt, <span style="color: #AF005F;">std</span>::nullopt<span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Without a good initial guess, success? "</span>, result.is_success<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Solution:"</span>, result.GetSolution<span style="color: #005F00;">(</span>x<span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #4E4E4E; font-style: italic;">// </span><span style="color: #4E4E4E; font-style: italic;">Pass an initial guess</span>
+  <span style="color: #AF005F;">Eigen</span>::<span style="color: #1F55A0;">VectorXd</span> <span style="color: #004651;">initial_guess</span><span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  initial_guess &lt;&lt; -<span style="color: #D75F00; font-weight: bold;">5</span>, <span style="color: #D75F00; font-weight: bold;">0</span>;
+  result = solver.Solve<span style="color: #AF005F;">(</span>prog, initial_guess, <span style="color: #AF005F;">std</span>::nullopt<span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"With a good initial guess, success? "</span>, result.is_success<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"Solution:"</span>, result.GetSolution<span style="color: #005F00;">(</span>x<span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">return</span> <span style="color: #D75F00; font-weight: bold;">0</span>;
+  ;
+<span style="color: #1F55A0;">}</span>
+</pre>
+</div>
+
+<p>
+To play around with it, <a href="https://github.com/Maverobot/docker-compiler-explorer-drake#usage">launch compiler-explorer locally</a> and click <a href="http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:31,positionColumn:1,positionLineNumber:31,selectionStartColumn:1,selectionStartLineNumber:31,startColumn:1,startLineNumber:31),source:'%23include+%3Cdrake/solvers/ipopt_solver.h%3E%0A%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A%0A%23include+%3Ciostream%3E%0A%0Atemplate+%3Ctypename...+Args%3E%0Avoid+print(Args%26%26...+value)+%7B%0A++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A%7D%0A%0Aint+main(int+argc,+char*+argv%5B%5D)+%7B%0A++//+Set+up+the+optimization+problem.%0A++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++auto+x+%3D+prog.NewContinuousVariables(2)%3B%0A++prog.AddConstraint(pow(x%5B0%5D,+2)+%2B+pow(x%5B1%5D,+2)+%3D%3D+100.)%3B%0A++prog.AddCost(pow(x%5B0%5D,+2)+-+pow(x%5B1%5D,+2))%3B%0A++auto+solver+%3D+drake::solvers::IpoptSolver()%3B%0A++//+The+user+doesn!'t+provide+an+initial+guess.%0A++auto+result+%3D+solver.Solve(prog,+std::nullopt,+std::nullopt)%3B%0A++print(%22Without+a+good+initial+guess,+success%3F+%22,+result.is_success())%3B%0A++print(%22Solution:%22,+result.GetSolution(x))%3B%0A++//+Pass+an+initial+guess%0A++Eigen::VectorXd+initial_guess(2)%3B%0A++initial_guess+%3C%3C+-5,+0%3B%0A++result+%3D+solver.Solve(prog,+initial_guess,+std::nullopt)%3B%0A++print(%22With+a+good+initial+guess,+success%3F+%22,+result.is_success())%3B%0A++print(%22Solution:%22,+result.GetSolution(x))%3B%0A++return+0%3B%0A++%3B%0A%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4">here</a>.
+</p>
+
+<p>
+For more details on setting the initial guess, the user could refer to <a href="./nonlinear_program.ipynb">Nonlinear program</a> section <code>Setting the initial guess</code>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org77d8b8a" class="outline-2">
+<h2 id="org77d8b8a">Add callback</h2>
+<div class="outline-text-2" id="text-org77d8b8a">
+<p>
+Some solvers support adding a callback function in each iteration. One usage of the callback is to visualize the solver progress in the current
+iteration. <code>MathematicalProgram</code> supports this usage through the function <code>AddVisualizationCallback</code>, although the usage is not limited
+to just visualization, the callback function can do anything. Here is an example
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/mathematical_program.h</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">drake/solvers/solve.h</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #1F55A0; font-weight: bold;">#include</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #005F00;">iostream</span><span style="color: #1F55A0;">&gt;</span>
+
+<span style="color: #D70000;">template</span> <span style="color: #1F55A0;">&lt;</span><span style="color: #D70000;">typename</span>... <span style="color: #1F55A0;">Args</span><span style="color: #1F55A0;">&gt;</span>
+<span style="color: #1F55A0;">void</span> <span style="color: #AF8700;">print</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">Args</span>&amp;&amp;... <span style="color: #004651;">value</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #AF005F;">(</span><span style="color: #AF005F;">std</span>::cout &lt;&lt; ... &lt;&lt; value<span style="color: #AF005F;">)</span> &lt;&lt; <span style="color: #005F00;">"\n---\n"</span>;
+<span style="color: #1F55A0;">}</span>
+
+<span style="color: #1F55A0;">void</span> <span style="color: #AF8700;">update</span><span style="color: #1F55A0;">(</span><span style="color: #D70000;">const</span> <span style="color: #AF005F;">Eigen</span>::<span style="color: #1F55A0;">Ref</span><span style="color: #AF005F;">&lt;</span><span style="color: #D70000;">const</span> <span style="color: #AF005F;">Eigen</span>::<span style="color: #1F55A0;">VectorXd</span><span style="color: #AF005F;">&gt;</span>&amp; <span style="color: #004651;">x</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  print<span style="color: #AF005F;">(</span><span style="color: #005F00;">"x = "</span>, x.transpose<span style="color: #005F00;">()</span><span style="color: #AF005F;">)</span>;
+<span style="color: #1F55A0;">}</span>
+
+<span style="color: #1F55A0;">int</span> <span style="color: #AF8700;">main</span><span style="color: #1F55A0;">(</span><span style="color: #1F55A0;">int</span> <span style="color: #004651;">argc</span>, <span style="color: #1F55A0;">char</span>* <span style="color: #004651;">argv</span><span style="color: #AF005F;">[]</span><span style="color: #1F55A0;">)</span> <span style="color: #1F55A0;">{</span>
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">prog</span> = <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::MathematicalProgram<span style="color: #AF005F;">()</span>;
+  <span style="color: #D70000;">auto</span> <span style="color: #004651;">x</span> = prog.NewContinuousVariables<span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  prog.AddConstraint<span style="color: #AF005F;">(</span>x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #005F00;">]</span> * x<span style="color: #005F00;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #005F00;">]</span> == <span style="color: #D75F00; font-weight: bold;">9</span><span style="color: #AF005F;">)</span>;
+  prog.AddCost<span style="color: #AF005F;">(</span>pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">0</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span> + pow<span style="color: #005F00;">(</span>x<span style="color: #8700AF;">[</span><span style="color: #D75F00; font-weight: bold;">1</span><span style="color: #8700AF;">]</span>, <span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #005F00;">)</span><span style="color: #AF005F;">)</span>;
+  prog.AddVisualizationCallback<span style="color: #AF005F;">(</span>update, x<span style="color: #AF005F;">)</span>;
+
+  <span style="color: #AF005F;">Eigen</span>::<span style="color: #1F55A0;">VectorXd</span> <span style="color: #004651;">x_init</span><span style="color: #AF005F;">(</span><span style="color: #D75F00; font-weight: bold;">2</span><span style="color: #AF005F;">)</span>;
+  x_init &lt;&lt; <span style="color: #D75F00; font-weight: bold;">4</span>, <span style="color: #D75F00; font-weight: bold;">5</span>;
+  <span style="color: #AF005F;">drake</span>::<span style="color: #AF005F;">solvers</span>::Solve<span style="color: #AF005F;">(</span>prog, x_init<span style="color: #AF005F;">)</span>;
+  <span style="color: #D70000;">return</span> <span style="color: #D75F00; font-weight: bold;">0</span>;
+<span style="color: #1F55A0;">}</span>
+</pre>
+</div>
+
+<p>
+To play around with it, <a href="https://github.com/Maverobot/docker-compiler-explorer-drake#usage">launch compiler-explorer locally</a> and click <a href="http://localhost:10240/#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,selection:(endColumn:1,endLineNumber:27,positionColumn:1,positionLineNumber:27,selectionStartColumn:1,selectionStartLineNumber:27,startColumn:1,startLineNumber:27),source:'++%23include+%3Cdrake/solvers/mathematical_program.h%3E%0A++%23include+%3Cdrake/solvers/solve.h%3E%0A%0A++%23include+%3Ciostream%3E%0A%0A++template+%3Ctypename...+Args%3E%0A++void+print(Args%26%26...+value)+%7B%0A++++(std::cout+%3C%3C+...+%3C%3C+value)+%3C%3C+%22%5Cn---%5Cn%22%3B%0A++%7D%0A%0A++void+update(const+Eigen::Ref%3Cconst+Eigen::VectorXd%3E%26+x)+%7B%0A++++print(%22x+%3D+%22,+x.transpose())%3B%0A++%7D%0A%0A++int+main(int+argc,+char*+argv%5B%5D)+%7B%0A++++auto+prog+%3D+drake::solvers::MathematicalProgram()%3B%0A++++auto+x+%3D+prog.NewContinuousVariables(2)%3B%0A++++prog.AddConstraint(x%5B0%5D+*+x%5B1%5D+%3D%3D+9)%3B%0A++++prog.AddCost(pow(x%5B0%5D,+2)+%2B+pow(x%5B1%5D,+2))%3B%0A++++prog.AddVisualizationCallback(update,+x)%3B%0A%0A++++Eigen::VectorXd+x_init(2)%3B%0A++++x_init+%3C%3C+4,+5%3B%0A++++drake::solvers::Solve(prog,+x_init)%3B%0A++++return+0%3B%0A++%7D%0A'),l:'5',n:'0',o:'C%2B%2B+source+%231',t:'0')),k:54.063974829575244,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:g9,filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'0',libraryCode:'0',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:c%2B%2B,libs:!((name:eigen,ver:'337'),(name:drake,ver:'110')),options:'-std%3Dc%2B%2B17',selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:1,tree:'1'),l:'5',n:'0',o:'g%2B%2B+9+(C%2B%2B,+Editor+%231,+Compiler+%231)',t:'0'),(h:output,i:(compiler:1,editor:1,fontScale:14,fontUsePx:'0',tree:'1',wrap:'1'),l:'5',n:'0',o:'Output+of+g%2B%2B+9+(Compiler+%231)',t:'0')),k:45.936025170424756,l:'4',m:100,n:'0',o:'',s:1,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3051a1c" class="outline-2">
+<h2 id="org3051a1c">Advanced tutorials</h2>
+<div class="outline-text-2" id="text-org3051a1c">
+<p>
+Setting solver parameters
+</p>
+
+<p>
+Updating costs and constraints(e.g. for efficient solving of many similar programs)
+</p>
+
+<p>
+Debugging tips
+</p>
+
+<p>
+Linear program
+</p>
+
+<p>
+Quadratic program
+</p>
+
+<p>
+Nonlinear program
+</p>
+
+<p>
+Sum-of-squares optimization
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="creator"><a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.5.2)</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
