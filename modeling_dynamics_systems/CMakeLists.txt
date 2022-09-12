@@ -1,0 +1,2 @@
+add_executable(symbolic_vector_system symbolic_vector_system.cpp)
+target_link_libraries(symbolic_vector_system PRIVATE drake::drake)
