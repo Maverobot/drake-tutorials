@@ -1,2 +1,5 @@
 add_executable(symbolic_vector_system symbolic_vector_system.cpp)
 target_link_libraries(symbolic_vector_system PRIVATE drake::drake)
+
+add_executable(combinations_of_systems combinations_of_systems.cpp)
+target_link_libraries(combinations_of_systems PRIVATE drake::drake gvc cgraph)
