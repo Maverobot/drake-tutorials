@@ -30,3 +30,4 @@ include(./cmake/FetchMatplotlib.cmake)
 
 add_subdirectory(mathematical_program)
 add_subdirectory(modeling_dynamics_systems)
+add_subdirectory(multibody_kinematics_and_dynamics)
